@@ -108,4 +108,58 @@ Recommending new books to user 1407 is easy. Each recommendation object has an I
 
 ## Advanced tutorial
 
+The recommendation service can receive user, item and consumption data in bulk. The load-balanced setup is also able to process many requests simultaneously. The Java client takes advantage of this by using multiple threads for uploading data. In this tutorial, we import the [MovieLens data set](http://www.grouplens.org/node/73#attachments) containing 100,000 ratings.
+
+The file <code>u.data</code> contains 100,000 lines of text, each containing four tab-separated fields: 
+	User ID | movie ID | a five star rating | a timestamp. 
+
+Let's create a method <code>parseLine()</code> that takes such a text line as input and converts it into a Consumption object. Here, we use two additional properties of the <code>Consumption</code> class. The Type property tells us what kind of interaction there was between the user and the item. In this case, the user gave a rating. Like the Gender property of the <code>User</code> class, we use an Enumeration as the argument. The Detail property tells us more about the rating system so that the recommendation algorithm can properly interpret and normalize the value. Here we have a five star rating system, and the user gave a rating between 1 and 5.
+
+	private Consumption parseLine(String line) throws Exception {
+		
+		// line structure: userid (tab) movieid (tab) rating (tab) timestamp
+		String[] parts = line.split("\t");
+		
+		Consumption consumption = new Consumption(parts[0], parts[1]);
+		consumption.setType(Consumption.Type.RATING);
+		
+		Double value = Double.parseDouble(parts[2]);
+		consumption.setDetail(new StarRating(5, 1, value));
+		
+		return consumption;
+	}
+
+Now, let's look at the rest of the program. This time, we create a <code>SugestioClient</code> object using the *four-argument* constructor. We have a lot of data to transmit, so we submit 500 consumptions in each web service request. We submit a maximum of 10 requests concurrently. When we use the <code>addConsumptions()</code> method of the SugestioClient, it transparently divides the list of consumptions into blocks of 500. A maximum of 10 such blocks are submitted concurrently. For example, if we pass a list containing 10,000 consumptions to addConsumptions, a total of 20 web service requests will be made, but no more than ten at the same time. If we pass it a list containing just 100 consumptions, only a single service call is made.
+
+	public void importMovieLens() throws Exception {
+		
+		// 500 consumptions per requests, 10 threads
+		SugestioClient client = new SugestioClient("sandbox", "demo", 500, 10);
+
+		List<Consumption> buffer = new ArrayList<Consumption>();
+		BufferedReader br = new BufferedReader(new FileReader("D:/data/ml-data_0/u.data"));
+		String line = null;
+		
+		while ((line = br.readLine()) != null) {
+
+			Consumption c = parseLine(line);
+			buffer.add(consumption);
+			
+			if (buffer.size() == 10,000) {
+				client.addConsumptions(buffer); // 10,000 / 500 = 20 requests
+				buffer.clear();
+			}
+		}
+
+		// transmit any remaining data
+		if (buffer.size() > 0) {
+			client.addConsumptions(buffer);
+			buffer.clear();
+		}
+
+		client.shutdown();
+	}
+
+## Exception handling
+
 To do
