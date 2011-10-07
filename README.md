@@ -4,7 +4,9 @@ This is a Java library for interfacing with the [Sugestio](http://www.sugestio.c
 recommendation service. Data is submitted as XML. Users, items and consumptions can
 be transmitted in bulk. The library makes use of the 
 [Concurrency API](http://download.oracle.com/javase/1.5.0/docs/guide/concurrency/index.html) 
-and the [Jersey](http://jersey.dev.java.net) RESTful web service client.
+and the [Jersey](http://jersey.dev.java.net) RESTful web service client. A zip file with 
+JAR and all dependencies can be downloaded [here](http://www.sugestio.com/sites/default/files/sugestio-java-bin.zip).
+
 
 ## About Sugestio
 
@@ -43,7 +45,8 @@ The following [API](http://www.sugestio.com/documentation) features are implemen
 
 ### Requirements
 
-This library is based on [Jersey](http://jersey.dev.java.net) -- an Open Source implementation of the JAX-RS 1.1 (JSR 311) API for building RESTful web services. The most recent version of the client requires Jersey 1.1.5.1 and the Jersey OAuth filter.
+This library is based on [Jersey](http://jersey.dev.java.net) -- an Open Source implementation of the JAX-RS 1.1 (JSR 311) API for building RESTful web services. The most recent version of the client requires Jersey 1.1.5.1 and the Jersey OAuth filter. All 
+dependencies can be found inside [this zip file](http://www.sugestio.com/sites/default/files/sugestio-java-bin.zip).
 
 # Tutorial and sample code
 
