@@ -26,9 +26,10 @@ public class Item extends Base {
     private String until;
     private String location_simple;
     private String location_latlong;
+    private String location_city;
 
     @XmlElement(name="creator")
-    private List<String> creators;    
+    private List<String> creators;
 
     @XmlElement(name="tag")
     private List<String> tags;
@@ -40,6 +41,7 @@ public class Item extends Base {
     private List<String> segments;
 
     private String permalink;
+    private String thumbnail;
     
     
     public Item() {
@@ -182,6 +184,14 @@ public class Item extends Base {
     public void setLocation_latlong(double latitude, double longitude) {
         this.location_latlong = latitude + "," + longitude;
     }
+    
+    public String getLocation_city() {
+    	return this.location_city;
+    }
+    
+    public void setLocation_city(String location_city) {
+    	this.location_city = location_city;
+    }
 
     public List<String> getCreators() {
         return this.creators;
@@ -243,6 +253,14 @@ public class Item extends Base {
 
     public void setPermalink(String permalink) {
         this.permalink = permalink;
+    }
+    
+    public String getThumbnail() {
+    	return this.thumbnail;
+    }
+    
+    public void setThumbnail(String thumbnail) {
+    	this.thumbnail = thumbnail;
     }
 
 }
