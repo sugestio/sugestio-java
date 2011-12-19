@@ -20,14 +20,20 @@ import javax.ws.rs.core.Response.Status.Family;
 
 public class GetRecommendationsCall extends Call implements Callable<SugestioResult<List<Recommendation>>> {
     
+	private RecommendationFilter filter;
     private PartitionType partitionType;
-    private String partitionId;    
+    private String partitionId;
 
 
     public GetRecommendationsCall(Client jClient, SugestioConfig config, ResourceType resourceType, String userId, String itemId, PartitionType partitionType, String partitionId) {
-        super(jClient, config, resourceType, userId, itemId);        
+        super(jClient, config, resourceType, userId, itemId);
         this.partitionType = partitionType;
-        this.partitionId = partitionId;        
+        this.partitionId = partitionId;
+    }
+    
+    public GetRecommendationsCall(Client jClient, SugestioConfig config, ResourceType resourceType, String userId, String itemId, RecommendationFilter filter) {
+        super(jClient, config, resourceType, userId, itemId);
+        this.filter = filter;
     }
 
     @Override
@@ -38,6 +44,10 @@ public class GetRecommendationsCall extends Call implements Callable<SugestioRes
     private SugestioResult<List<Recommendation>> get() throws SugestioException {
         
         WebResource webResource = jClient.resource(config.getBaseUri()).path(getUri(Verb.GET, resourceType));
+        
+        if (filter != null) {
+        	webResource = webResource.queryParams(filter.toQueryParams());
+        }
 
         if (partitionType != null && partitionId != null && partitionId.length() > 0) {
             webResource = webResource.queryParam(partitionType.name().toLowerCase(), partitionId);
@@ -59,21 +69,17 @@ public class GetRecommendationsCall extends Call implements Callable<SugestioRes
             } else {
                 // handle 4xx and 5xx response codes
                 result.setMessage(cr.getEntity(String.class));
-            }            
-
+            }
+            
         } catch (Exception e) {
-
             // handle local problems such as network issues
             result = new SugestioResult<List<Recommendation>>(false);
             result.setMessage(e.getMessage());
-
-        } finally {
-
-            result.setVerb(Verb.GET);
-            result.setUri(webResource.getURI());            
-            return result;
         }
         
+        result.setVerb(Verb.GET);
+        result.setUri(webResource.getURI());
+        return result;
     }    
 
 }

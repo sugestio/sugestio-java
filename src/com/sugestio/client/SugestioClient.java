@@ -4,6 +4,7 @@ import com.sugestio.client.call.DeleteRecommendationCall;
 import com.sugestio.client.call.GetAnalyticsCall;
 import com.sugestio.client.call.GetRecommendationsCall;
 import com.sugestio.client.call.PostCall;
+import com.sugestio.client.call.RecommendationFilter;
 import com.sugestio.client.model.Analytics;
 import com.sugestio.client.model.Consumption;
 import com.sugestio.client.model.Item;
@@ -132,13 +133,29 @@ public class SugestioClient {
     //<editor-fold defaultstate="collapsed" desc=" Recommendations and Similar items ">
 
     /**
-     * Gets recommendations for the given userid
+     * Gets recommendations for the given userId
      * @param userId id of the user
      * @return a list of recommendations
      * @throws SugestioException
      */
     public List<Recommendation> getRecommendations(String userId) throws SugestioException {
         return getRecommendations(userId, null, null);
+    }
+    
+    /**
+     * Gets recommendations for the given userId
+     * @param userId id of the user
+     * @param filter recommendation filter
+     * @return a filtered list of recommendations
+     * @throws SugestioException
+     */
+    public List<Recommendation> getRecommendations(String userId, RecommendationFilter filter) throws SugestioException {
+    	
+    	GetRecommendationsCall gc = new GetRecommendationsCall(
+                jClient, config, ResourceType.RECOMMENDATION,
+                userId, null, filter);
+    	
+    	return gc.call().getEntity();
     }
 
     /**
@@ -210,6 +227,22 @@ public class SugestioClient {
      */
     public List<Recommendation> getSimilar(String itemId) throws SugestioException {
         return getSimilar(itemId, null, null);
+    }
+    
+    /**
+     * Gets items that are similar to the given item
+     * @param itemId id of the item
+     * @param filter recommendation filter
+     * @return filtered list of similar items
+     * @throws SugestioException
+     */
+    public List<Recommendation> getSimilar(String itemId, RecommendationFilter filter) throws SugestioException {
+    	
+    	GetRecommendationsCall gc = new GetRecommendationsCall(
+                jClient, config, ResourceType.RECOMMENDATION,
+                null, itemId, filter);
+    	
+    	return gc.call().getEntity();
     }
 
     /**
