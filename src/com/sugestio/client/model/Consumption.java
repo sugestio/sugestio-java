@@ -19,9 +19,10 @@ public class Consumption extends Base {
         CHECKIN;
     }    
     
+    private String id;
     private String userid;
-    private String itemid;    
-    private Type type;
+    private String itemid;
+    private String type;
     private String detail;
     private String date;
     private String location_simple;
@@ -31,9 +32,23 @@ public class Consumption extends Base {
     public Consumption() {
     }
     
+    public Consumption(String id, String userid, String itemid) {
+    	this.id = id;
+    	this.userid = userid;
+    	this.itemid = itemid;
+    }
+    
     public Consumption(String userid, String itemid) {
         this.userid = userid;
         this.itemid = itemid;
+    }
+    
+    public String getId() {
+    	return this.id;
+    }
+    
+    public void setId(String id) {
+    	this.id = id;
     }
     
     @XmlElement(required=true)
@@ -50,16 +65,20 @@ public class Consumption extends Base {
         return this.itemid;
     }
     
-    public void setItemid(String itemid) {        
+    public void setItemid(String itemid) {
         this.itemid = itemid;
-    }    
+    }
     
-    public Type getType() {        
+    public String getType() {
         return this.type;
+    }
+    
+    public void setType(String type) {
+    	this.type = type;
     }
    
     public void setType(Type type) {
-        this.type = type;        
+        this.type = type.name();
     }
     
     public String getDetail() {
