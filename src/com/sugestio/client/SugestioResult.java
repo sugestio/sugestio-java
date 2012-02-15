@@ -75,14 +75,14 @@ public class SugestioResult<T> {
     }
 
     /**     
-     * @return the uri
+     * @return the URI
      */
     public URI getUri() {
         return uri;
     }
 
     /**
-     * @param uri the uri to set
+     * @param uri the URI to set
      */
     public void setUri(URI uri) {
         this.uri = uri;
@@ -117,7 +117,7 @@ public class SugestioResult<T> {
 
     /**
      * Sends a full report of this service request to a PrintStream
-     * @param ps the printstream
+     * @param ps the PrintStream
      */
     public void printReport(PrintStream ps) {
 
@@ -131,7 +131,7 @@ public class SugestioResult<T> {
 
         } else if (getStatusType().getFamily() == Family.SUCCESSFUL) {
 
-            ps.println("\t" + getStatusPhrase());
+            ps.println("\t" + getStatusPhrase());            
 
         } else if (getStatusType().getFamily() == Family.CLIENT_ERROR) {
 

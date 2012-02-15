@@ -159,7 +159,7 @@ public class SugestioClient {
     }
 
     /**
-     * Gets recommendations for the given userid, limited to the given partition
+     * Gets recommendations for the given userId, limited to the given partition
      * @param userId id of the user
      * @param partitionType limit recommendations to one category, one product segment, ...
      * @param partitionId id of the category or segment
@@ -282,7 +282,7 @@ public class SugestioClient {
 
     /**
      * Gets similar items for the given itemIds, limited to the given partition
-     * @param itemIds list of item ids
+     * @param itemIds the items for which to get similar items
      * @param partitionType limit items to one category, one segment, ...
      * @param partitionId id of the category or segment
      * @return for each item, a list of similar items
@@ -316,16 +316,16 @@ public class SugestioClient {
      * @return result
      * @throws SugestioException
      */
-    public SugestioResult deleteRecommendation(String userId, String itemId) throws SugestioException {
+    public SugestioResult<String> deleteRecommendation(String userId, String itemId) throws SugestioException {
 
-        Callable<SugestioResult> call = new DeleteRecommendationCall(jClient, config, userId, itemId);
-        Future<SugestioResult> future = executor.submit(call);
-        SugestioResult result = null;
+        Callable<SugestioResult<String>> call = new DeleteRecommendationCall(jClient, config, userId, itemId);
+        Future<SugestioResult<String>> future = executor.submit(call);
+        SugestioResult<String> result = null;
 
         try {
             result = future.get();
         } catch (Exception e) {
-            result = new SugestioResult(false);
+            result = new SugestioResult<String>(false);
             result.setMessage(e.getMessage());
         }
 
@@ -345,12 +345,12 @@ public class SugestioClient {
      * @return result
      * @throws SugestioException
      */
-    public SugestioResult addConsumption(Consumption consumption) throws SugestioException {
+    public SugestioResult<String> addConsumption(Consumption consumption) throws SugestioException {
 
         List<Consumption> consumptions = new ArrayList<Consumption>();
         consumptions.add(consumption);        
         
-        SugestioResult result = getSingleResult(addConsumptions(consumptions));
+        SugestioResult<String> result = getSingleResult(addConsumptions(consumptions));
 
         if (!result.isOK())
             throw new SugestioException(result);
@@ -363,18 +363,18 @@ public class SugestioClient {
      * @param consumptions list of consumptions
      * @return result     
      */
-    public Map<List<Consumption>, SugestioResult> addConsumptions(List<Consumption> consumptions) {
+    public Map<List<Consumption>, SugestioResult<String>> addConsumptions(List<Consumption> consumptions) {
 
         List<List<Consumption>> sublists = divide(consumptions);
 
-        Map<Future<SugestioResult>, List<Consumption>> futures =
-                Collections.synchronizedMap(new HashMap<Future<SugestioResult>, List<Consumption>>());
+        Map<Future<SugestioResult<String>>, List<Consumption>> futures =
+                Collections.synchronizedMap(new HashMap<Future<SugestioResult<String>>, List<Consumption>>());
 
         for (List<Consumption> sublist : sublists) {
             PostConsumptionsRequest pcr = new PostConsumptionsRequest();
             pcr.setList(sublist);
-            Callable<SugestioResult> call = new PostCall(jClient, config, ResourceType.CONSUMPTION, pcr);
-            Future<SugestioResult> future = executor.submit(call);
+            Callable<SugestioResult<String>> call = new PostCall(jClient, config, ResourceType.CONSUMPTION, pcr);
+            Future<SugestioResult<String>> future = executor.submit(call);
             futures.put(future, sublist);
         }
 
@@ -391,12 +391,12 @@ public class SugestioClient {
      * @return result
      * @throws SugestioException
      */
-    public SugestioResult addUser(User user) throws SugestioException {
+    public SugestioResult<String> addUser(User user) throws SugestioException {
 
         List<User> users = new ArrayList<User>();
         users.add(user);
 
-        SugestioResult result = getSingleResult(addUsers(users));
+        SugestioResult<String> result = getSingleResult(addUsers(users));
 
         if (!result.isOK())
             throw new SugestioException(result);
@@ -409,23 +409,23 @@ public class SugestioClient {
      * @param users list of users
      * @return result
      */
-    public Map<List<User>, SugestioResult> addUsers(List<User> users) {
+    public Map<List<User>, SugestioResult<String>> addUsers(List<User> users) {
 
         List<List<User>> sublists = divide(users);
 
-        Map<Future<SugestioResult>, List<User>> futures =
-                Collections.synchronizedMap(new HashMap<Future<SugestioResult>, List<User>>());
+        Map<Future<SugestioResult<String>>, List<User>> futures =
+                Collections.synchronizedMap(new HashMap<Future<SugestioResult<String>>, List<User>>());
 
         for (List<User> sublist : sublists) {
             PostUsersRequest req = new PostUsersRequest();
             req.setList(sublist);
-            Callable<SugestioResult> call = new PostCall(jClient, config, ResourceType.USER, req);
-            Future<SugestioResult> future = executor.submit(call);
+            Callable<SugestioResult<String>> call = new PostCall(jClient, config, ResourceType.USER, req);
+            Future<SugestioResult<String>> future = executor.submit(call);
             futures.put(future, sublist);
         }
 
         return collectResults(futures);
-    }
+    }    
 
     //</editor-fold>
 
@@ -434,15 +434,15 @@ public class SugestioClient {
     /**
      * Add or update a single item.
      * @param item
-     * @return result
+     * @return
      * @throws SugestioException
      */
-    public SugestioResult addItem(Item item) throws SugestioException {
+    public SugestioResult<String> addItem(Item item) throws SugestioException {
 
         List<Item> items = new ArrayList<Item>();
         items.add(item);
 
-        SugestioResult result = getSingleResult(addItems(items));
+        SugestioResult<String> result = getSingleResult(addItems(items));
 
         if (!result.isOK())
             throw new SugestioException(result);
@@ -455,18 +455,18 @@ public class SugestioClient {
      * @param items list of items
      * @return result
      */
-    public Map<List<Item>, SugestioResult> addItems(List<Item> items) {
+    public Map<List<Item>, SugestioResult<String>> addItems(List<Item> items) {
 
         List<List<Item>> sublists = divide(items);
 
-        Map<Future<SugestioResult>, List<Item>> futures =
-                Collections.synchronizedMap(new HashMap<Future<SugestioResult>, List<Item>>());
+        Map<Future<SugestioResult<String>>, List<Item>> futures =
+                Collections.synchronizedMap(new HashMap<Future<SugestioResult<String>>, List<Item>>());
 
         for (List<Item> sublist : sublists) {
             PostItemsRequest req = new PostItemsRequest();
             req.setList(sublist);
-            Callable<SugestioResult> call = new PostCall(jClient, config, ResourceType.ITEM, req);
-            Future<SugestioResult> future = executor.submit(call);
+            Callable<SugestioResult<String>> call = new PostCall(jClient, config, ResourceType.ITEM, req);
+            Future<SugestioResult<String>> future = executor.submit(call);
             futures.put(future, sublist);
         }
 
@@ -546,12 +546,12 @@ public class SugestioClient {
         return result;
     }
 
-    private <T> Map<List<T>, SugestioResult> collectResults(Map<Future<SugestioResult>, List<T>> futures) {
+    private <T> Map<List<T>, SugestioResult<String>> collectResults(Map<Future<SugestioResult<String>>, List<T>> futures) {
 
-        Map<List<T>, SugestioResult> results =
-                Collections.synchronizedMap(new HashMap<List<T>, SugestioResult>());
+        Map<List<T>, SugestioResult<String>> results =
+                Collections.synchronizedMap(new HashMap<List<T>, SugestioResult<String>>());
 
-        for (Entry<Future<SugestioResult>, List<T>> entry : futures.entrySet()) {
+        for (Entry<Future<SugestioResult<String>>, List<T>> entry : futures.entrySet()) {
             try {
                 results.put(entry.getValue(), entry.getKey().get());
                 // we skip over exceptions, if the client doesn't receive a response for a set of requests,
@@ -570,15 +570,15 @@ public class SugestioClient {
 
     }
 
-    private <T> SugestioResult getSingleResult(Map<List<T>, SugestioResult> results) throws SugestioException {
+    private <T> SugestioResult<String> getSingleResult(Map<List<T>, SugestioResult<String>> results) throws SugestioException {
 
         if (results.size() != 1) {
             //throw new SugestioException(null, "");
         }
 
-        SugestioResult result = null;
+        SugestioResult<String> result = null;
 
-        for (Entry<List<T>, SugestioResult> entry : results.entrySet()) {
+        for (Entry<List<T>, SugestioResult<String>> entry : results.entrySet()) {
             result = entry.getValue();
         }
 
