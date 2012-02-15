@@ -21,7 +21,9 @@ public class Example {
 		Example example = new Example();		
 		//example.getRecommendations();
 		//example.addConsumption();
-		example.addConsumptionsBulk();
+		//example.addConsumptionsBulk();
+		//example.deleteItem();
+		example.deleteUser();
 		example.shutdown();
 	}
 	
@@ -79,6 +81,30 @@ public class Example {
 			result.printReport();
 		}
 		
+	}
+	
+	public void deleteItem() {
+
+		try {
+			SugestioResult<String> result = client.deleteItem("1");
+			result.printReport();
+		} catch (SugestioException e) {
+			e.getSugestioResult().printReport();
+		}
+	}
+	
+	public void deleteUser() {
+
+		try {
+			// delete user metadata
+			SugestioResult<String> result1 = client.deleteUser("1");			
+			result1.printReport();
+			// delete user consumption data
+			SugestioResult<String> result2 = client.deleteUserConsumptions("1");
+			result2.printReport();
+		} catch (SugestioException e) {
+			e.getSugestioResult().printReport();
+		}
 	}
 
 }

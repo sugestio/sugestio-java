@@ -17,18 +17,21 @@ public abstract class Call {
     protected ResourceType resourceType;
     protected String userId;
     protected String itemId;
+    protected String consumptionId;
 
 
     protected Call(Client jClient, SugestioConfig config, ResourceType resourceType) {
-        this(jClient, config, resourceType, null, null);
+        this(jClient, config, resourceType, null, null, null);
     }
 
-    protected Call(Client jClient, SugestioConfig config, ResourceType resourceType, String userId, String itemId) {
+    protected Call(Client jClient, SugestioConfig config, ResourceType resourceType, 
+    		String userId, String itemId, String consumptionId) {
         this.jClient = jClient;
         this.config = config;
         this.resourceType = resourceType;
         this.userId = userId;
         this.itemId = itemId;
+        this.consumptionId = consumptionId;
     }
 
     protected String getUri(Verb verb, ResourceType resourceType) {
@@ -61,6 +64,19 @@ public abstract class Call {
 
             if (verb == Verb.POST) {
                 uri += "/consumptions";
+            } else if (verb == Verb.DELETE) {
+            	if (consumptionId != null) {
+            		// delete one consumption in particular
+            		uri += "/consumptions/" + consumptionId + ".xml";
+            	} else if (userId != null && itemId != null) {
+            		// delete all user-item pair consumptions
+            		uri += "/users/" + userId + "/consumptions/" + itemId + ".xml";            		
+            	} else if (userId != null) {
+            		// delete all consumptions of this user
+            		uri += "/users/" + userId + "/consumptions.xml"; 
+            	} else {
+            		return null;
+            	}
             } else {
                 return null;
             }
@@ -69,6 +85,8 @@ public abstract class Call {
 
             if (verb == Verb.POST) {
                 uri += "/items";
+            } else if (verb == Verb.DELETE && itemId != null) {
+            	uri += "/items/" + itemId + ".xml";
             } else {
                 return null;
             }
@@ -77,6 +95,8 @@ public abstract class Call {
 
             if (verb == Verb.POST) {
                 uri += "/users";
+            } else if (verb == Verb.DELETE && userId != null) {
+            	uri += "/users/" + userId + ".xml";
             } else {
                 return null;
             }

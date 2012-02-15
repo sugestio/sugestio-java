@@ -17,7 +17,7 @@ import javax.ws.rs.core.Response.Status.Family;
 public class DeleteRecommendationCall extends Call implements Callable<SugestioResult<String>> {
 
     public DeleteRecommendationCall(Client jClient, SugestioConfig config, String userId, String itemId) {
-        super(jClient, config, ResourceType.RECOMMENDATION, userId, itemId);
+        super(jClient, config, ResourceType.RECOMMENDATION, userId, itemId, null);
     }
 
     @Override

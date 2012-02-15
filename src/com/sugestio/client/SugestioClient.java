@@ -1,5 +1,18 @@
 package com.sugestio.client;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import com.sugestio.client.call.DeleteCall;
 import com.sugestio.client.call.DeleteRecommendationCall;
 import com.sugestio.client.call.GetAnalyticsCall;
 import com.sugestio.client.call.GetRecommendationsCall;
@@ -17,17 +30,6 @@ import com.sugestio.client.request.PostUsersRequest;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 
 public class SugestioClient {
@@ -380,6 +382,31 @@ public class SugestioClient {
 
         return collectResults(futures);
     }
+    
+    /**
+     * Deletes the consumption data of the given user. The user's metadata is not deleted.
+     * @param userId
+     * @return
+     * @throws SugestioException
+     */
+    public SugestioResult<String> deleteUserConsumptions(String userId) throws SugestioException {
+    
+    	Callable<SugestioResult<String>> call = new DeleteCall(jClient, config, ResourceType.CONSUMPTION, userId, null, null);
+        Future<SugestioResult<String>> future = executor.submit(call);
+        SugestioResult<String> result = null;
+
+        try {
+            result = future.get();
+        } catch (Exception e) {
+            result = new SugestioResult<String>(false);
+            result.setMessage(e.getMessage());
+        }
+
+        if (!result.isOK())
+            throw new SugestioException(result);
+
+        return result;
+    }
 
     //</editor-fold>
 
@@ -425,7 +452,32 @@ public class SugestioClient {
         }
 
         return collectResults(futures);
-    }    
+    }
+    
+    /**
+     * Deletes the metadata of the given user. The user's consumptions are not deleted.
+     * @param userId
+     * @return
+     * @throws SugestioException
+     */
+    public SugestioResult<String> deleteUser(String userId) throws SugestioException {
+    
+    	Callable<SugestioResult<String>> call = new DeleteCall(jClient, config, ResourceType.USER, userId, null, null);
+        Future<SugestioResult<String>> future = executor.submit(call);
+        SugestioResult<String> result = null;
+
+        try {
+            result = future.get();
+        } catch (Exception e) {
+            result = new SugestioResult<String>(false);
+            result.setMessage(e.getMessage());
+        }
+
+        if (!result.isOK())
+            throw new SugestioException(result);
+
+        return result;
+    }
 
     //</editor-fold>
 
@@ -471,6 +523,31 @@ public class SugestioClient {
         }
 
         return collectResults(futures);        
+    }
+    
+    /**
+     * Deletes the metadata of the given user. The user's consumptions are not deleted.
+     * @param itemId
+     * @return
+     * @throws SugestioException
+     */
+    public SugestioResult<String> deleteItem(String itemId) throws SugestioException {
+    
+    	Callable<SugestioResult<String>> call = new DeleteCall(jClient, config, ResourceType.ITEM, null, itemId, null);
+        Future<SugestioResult<String>> future = executor.submit(call);
+        SugestioResult<String> result = null;
+
+        try {
+            result = future.get();
+        } catch (Exception e) {
+            result = new SugestioResult<String>(false);
+            result.setMessage(e.getMessage());
+        }
+
+        if (!result.isOK())
+            throw new SugestioException(result);
+
+        return result;
     }
 
     //</editor-fold>

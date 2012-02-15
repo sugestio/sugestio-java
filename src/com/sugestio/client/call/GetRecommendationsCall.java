@@ -26,13 +26,13 @@ public class GetRecommendationsCall extends Call implements Callable<SugestioRes
 
 
     public GetRecommendationsCall(Client jClient, SugestioConfig config, ResourceType resourceType, String userId, String itemId, PartitionType partitionType, String partitionId) {
-        super(jClient, config, resourceType, userId, itemId);
+        super(jClient, config, resourceType, userId, itemId, null);
         this.partitionType = partitionType;
         this.partitionId = partitionId;
     }
     
     public GetRecommendationsCall(Client jClient, SugestioConfig config, ResourceType resourceType, String userId, String itemId, RecommendationFilter filter) {
-        super(jClient, config, resourceType, userId, itemId);
+        super(jClient, config, resourceType, userId, itemId, null);
         this.filter = filter;
     }
 
