@@ -1,18 +1,19 @@
 package com.sugestio.client.call;
 
-import com.sugestio.client.SugestioConfig;
-import com.sugestio.client.SugestioClient;
+import java.util.concurrent.Callable;
+
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status.Family;
+
 import com.sugestio.client.SugestioClient.ResourceType;
 import com.sugestio.client.SugestioClient.Verb;
+import com.sugestio.client.SugestioConfig;
 import com.sugestio.client.SugestioException;
 import com.sugestio.client.SugestioResult;
 import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource.Builder;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import java.util.concurrent.Callable;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response.Status.Family;
+import com.sun.jersey.api.client.WebResource.Builder;
 
 
 public class PostCall<T> extends Call implements Callable<SugestioResult<T>> {       
@@ -49,18 +50,14 @@ public class PostCall<T> extends Call implements Callable<SugestioResult<T>> {
             }
 
         } catch (Exception e) {
-
             // handle local problems such as network issues
             result = new SugestioResult<T>(false);
             result.setMessage(e.getMessage());
-
-        } finally {
-
-            result.setVerb(Verb.POST);
-            result.setUri(webResource.getURI());
-            return result;
         }
-
+        
+        result.setVerb(Verb.POST);
+        result.setUri(webResource.getURI());
+        return result;
     }
     
 }

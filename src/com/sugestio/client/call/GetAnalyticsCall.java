@@ -1,21 +1,20 @@
 package com.sugestio.client.call;
 
-import com.sugestio.client.SugestioConfig;
+import java.util.concurrent.Callable;
+
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status.Family;
+
 import com.sugestio.client.SugestioClient.ResourceType;
 import com.sugestio.client.SugestioClient.Verb;
+import com.sugestio.client.SugestioConfig;
 import com.sugestio.client.SugestioException;
 import com.sugestio.client.SugestioResult;
 import com.sugestio.client.model.Analytics;
-import com.sugestio.client.model.Report;
 import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource.Builder;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response.Status.Family;
+import com.sun.jersey.api.client.WebResource.Builder;
 
 
 public class GetAnalyticsCall extends Call implements Callable<SugestioResult<Analytics>> {
@@ -67,12 +66,11 @@ public class GetAnalyticsCall extends Call implements Callable<SugestioResult<An
             result = new SugestioResult<Analytics>(false);
             result.setMessage(e.getMessage());
 
-        } finally {
-
-            result.setVerb(Verb.GET);
-            result.setUri(webResource.getURI());            
-            return result;
         }
+        
+        result.setVerb(Verb.GET);
+        result.setUri(webResource.getURI());            
+        return result;
         
     }    
 

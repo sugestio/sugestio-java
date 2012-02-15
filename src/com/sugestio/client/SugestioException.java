@@ -3,7 +3,11 @@ package com.sugestio.client;
 
 public class SugestioException extends Exception {
     
-    private SugestioResult sugestioResult;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private SugestioResult sugestioResult;
     
     
     public SugestioException(SugestioResult sugestioResult) {

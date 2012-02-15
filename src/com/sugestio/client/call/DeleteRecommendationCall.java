@@ -50,13 +50,11 @@ public class DeleteRecommendationCall<T> extends Call implements Callable<Sugest
             result = new SugestioResult<T>(false);
             result.setMessage(e.getMessage());
 
-        } finally {
-
-            result.setVerb(Verb.DELETE);
-            result.setUri(webResource.getURI());
-            return result;
         }
         
+        result.setVerb(Verb.DELETE);
+        result.setUri(webResource.getURI());
+        return result;
     }
     
 }
