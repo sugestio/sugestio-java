@@ -407,6 +407,55 @@ public class SugestioClient {
 
         return result;
     }
+    
+    /**
+     * Deletes the consumption identified by the given consumptionId.
+     * @param consumptionId
+     * @return
+     * @throws SugestioException
+     */
+    public SugestioResult<String> deleteConsumption(String consumptionId) throws SugestioException {
+    	
+    	Callable<SugestioResult<String>> call = new DeleteCall(jClient, config, ResourceType.CONSUMPTION, null, null, consumptionId);
+        Future<SugestioResult<String>> future = executor.submit(call);
+        SugestioResult<String> result = null;
+
+        try {
+            result = future.get();
+        } catch (Exception e) {
+            result = new SugestioResult<String>(false);
+            result.setMessage(e.getMessage());
+        }
+
+        if (!result.isOK())
+            throw new SugestioException(result);
+
+        return result;
+    }
+    
+    /**
+     * Deletes the consumptions identified by the given consumptionIds
+     * @param consumptionIds
+     * @return
+     * @throws SugestioException
+     */
+    public Map<String, SugestioResult<String>> deleteConsumptions(List<String> consumptionIds) throws SugestioException {
+    	
+    	Map<Future<SugestioResult<String>>, String> futures =
+                Collections.synchronizedMap(new HashMap<Future<SugestioResult<String>>, String>());
+
+        for (String consumptionId : consumptionIds) {
+
+            Callable<SugestioResult<String>> call =
+            		new DeleteCall(jClient, config, ResourceType.CONSUMPTION, 
+            				null, null, consumptionId);
+
+            Future<SugestioResult<String>> future = executor.submit(call);
+            futures.put(future, consumptionId);
+        }
+
+        return collectDeleteResults(futures);
+    }
 
     //</editor-fold>
 
@@ -621,6 +670,30 @@ public class SugestioClient {
         }        
 
         return result;
+    }
+    
+    private Map<String, SugestioResult<String>> collectDeleteResults(Map<Future<SugestioResult<String>>, String> futures) {
+
+        Map<String, SugestioResult<String>> results =
+                Collections.synchronizedMap(new HashMap<String, SugestioResult<String>>());
+
+        for (Entry<Future<SugestioResult<String>>, String> entry : futures.entrySet()) {
+            try {
+                results.put(entry.getValue(), entry.getKey().get());
+                // we skip over exceptions, if the client doesn't receive a response for a set of requests,
+                // it must assume that the request failed
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+                //throw new SugestioException(null, null, "Interrupted!");
+            } catch (ExecutionException ex) {
+                ex.printStackTrace();
+                // create 500 status object here
+                //throw new SugestioException(null, null, "Execution exception!");
+            }
+        }
+
+        return results;
+
     }
 
     private <T> Map<List<T>, SugestioResult<String>> collectResults(Map<Future<SugestioResult<String>>, List<T>> futures) {

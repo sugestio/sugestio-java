@@ -19,11 +19,16 @@ public class Example {
 	public static void main(String[] args) {
 		
 		Example example = new Example();		
+		
 		//example.getRecommendations();
 		//example.addConsumption();
 		//example.addConsumptionsBulk();
 		//example.deleteItem();
-		example.deleteUser();
+		//example.deleteUser();
+		//example.deleteConsumption();
+		example.deleteConsumptionsBulk();
+		
+		// remember to shutdown the client
 		example.shutdown();
 	}
 	
@@ -105,6 +110,32 @@ public class Example {
 		} catch (SugestioException e) {
 			e.getSugestioResult().printReport();
 		}
+	}
+	
+	public void deleteConsumption() {
+		try {
+			SugestioResult<String> result = client.deleteConsumption("abcd");
+			result.printReport();
+		} catch (SugestioException e) {
+			e.getSugestioResult().printReport();
+		}
+	}
+	
+	public void deleteConsumptionsBulk() {
+		
+		List<String> consumptionIds = new ArrayList<String>();
+		consumptionIds.add("abcd");
+		consumptionIds.add("efgh");
+		
+		try {
+			Map<String, SugestioResult<String>> results = client.deleteConsumptions(consumptionIds);
+			for (SugestioResult<String> result : results.values()) {
+				result.printReport();
+			}
+		} catch (SugestioException e) {
+			e.getSugestioResult().printReport();
+		}
+		
 	}
 
 }
