@@ -110,7 +110,7 @@ public class Consumption extends Base {
      * @param milliseconds number of milliseconds that have passed since the UNIX epoch
      */
     public void setDate(long milliseconds) {
-        this.date = getDateString(milliseconds);        
+        this.date = Base.getDateString(milliseconds);        
     }
 
     /**
@@ -120,7 +120,7 @@ public class Consumption extends Base {
      * @param day day of the month (1-31)
      */
     public void setDate(int year, int month, int day) {
-        this.date = getDateString(year, month, day);
+        this.date = Base.getDateString(year, month, day);
     }
     
     public String getLocation_simple() {

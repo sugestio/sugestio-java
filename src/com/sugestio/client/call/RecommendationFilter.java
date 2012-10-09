@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.ws.rs.core.MultivaluedMap;
 
+import com.sugestio.client.model.Base;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 public class RecommendationFilter {
@@ -15,6 +16,15 @@ public class RecommendationFilter {
 	private List<String> location_simples;
 	private List<String> location_cities;
 	private Integer limit;
+	private String time;
+	private Integer time_radius;
+	private TimeUnit time_unit;
+	
+	public enum TimeUnit {
+		m,
+		h,
+		d
+	}
 	
 	/**
 	 * Creates an empty RecommendationFilter
@@ -26,6 +36,9 @@ public class RecommendationFilter {
 		this.location_simples = new LinkedList<String>();
 		this.location_cities = new LinkedList<String>();
 		this.limit = null;
+		this.time = null;
+		this.time_radius = null;
+		this.time_unit = null;
 	}
 	
 	/**
@@ -96,6 +109,44 @@ public class RecommendationFilter {
 		this.limit = limit;
 	}
 	
+	/**
+	 * Recommended items must be available at this precise point in time.
+	 * @param time a timestamp in a supported format.
+	 */
+	public void setTime(String time) {
+		this.time = time;
+	}
+	
+	/**
+	 * Recommended items must be available at this precise point in time.
+     * @param milliseconds number of milliseconds that have passed since the UNIX epoch	 
+	 */
+	public void setTime(long milliseconds) {
+		setTime(Base.getDateString(milliseconds));
+	}
+	
+	/**
+	 * Recommended items must be available at any time in the given time window.
+	 * @param milliseconds number of milliseconds that have passed since the UNIX epoch
+	 * @param radius a time window.
+	 * @param unit unit of the radius parameter (minutes, hours, days).
+	 */
+	public void setTime(long milliseconds, Integer radius, TimeUnit unit) {
+		setTime(Base.getDateString(milliseconds), radius, unit);
+	}
+	
+	/**
+	 * Recommended items must be available at any time in the given time window.
+	 * @param time a timestamp in a supported format.
+	 * @param radius a time window.
+	 * @param unit unit of the radius parameter (minutes, hours, days).
+	 */
+	public void setTime(String time, Integer radius, TimeUnit unit) {
+		this.time = time;
+		this.time_radius = radius;
+		this.time_unit = unit;
+	}
+	
 	protected MultivaluedMap<String, String> toQueryParams() {
 		
 		MultivaluedMap<String, String> params = new MultivaluedMapImpl();
@@ -122,6 +173,14 @@ public class RecommendationFilter {
 		
 		if (limit != null) {
 			params.add("limit", ""+limit);
+		}
+		
+		if (time != null) {			
+			params.add("time", time);			
+			if (time_radius != null && time_unit != null) {
+				params.add("time_radius", ""+time_radius);
+				params.add("time_unit", time_unit.name());
+			}
 		}
 		
 		return params;
