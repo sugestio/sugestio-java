@@ -259,8 +259,30 @@ public class Item extends Base {
     	this.periods = periods;
     }
     
+    /**
+     * Add an availability period in <start>/<end> format, e.g. "2012-01-01/2012-03-31" 
+     * @param period a period string in a supported format.
+     */
     public void addPeriod(String period) {
     	this.periods.add(period);
+    }
+    
+    /**
+     * Convenience method for adding an availability period.
+     * @param start a timestamp in a supported format.
+     * @param end a timestamp in a supported format.
+     */
+    public void addPeriod(String start, String end) {
+    	addPeriod(start + "/" + end);
+    }
+    
+    /**
+     * Convenience method for adding an availability period.
+     * @param start an epoch date (milliseconds)
+     * @param end an epoch date (milliseconds)
+     */
+    public void addPeriod(long start, long end) {
+    	addPeriod(Base.getDateString(start) + "/" + Base.getDateString(end));
     }
 
     public String getPermalink() {
