@@ -39,6 +39,9 @@ public class Item extends Base {
 
     @XmlElement(name="segment")
     private List<String> segments;
+    
+    @XmlElement(name="period")
+    private List<String> periods;
 
     private String permalink;
     private String thumbnail;
@@ -49,6 +52,7 @@ public class Item extends Base {
         this.creators = new ArrayList<String>();
         this.categories = new ArrayList<String>();
         this.segments = new ArrayList<String>();
+        this.periods = new ArrayList<String>();
     }    
     
     public Item(String id) {
@@ -245,6 +249,18 @@ public class Item extends Base {
 
     public void addSegment(String segment) {
         this.segments.add(segment);
+    }
+    
+    public List<String> getPeriods() {
+    	return this.periods;
+    }
+    
+    public void setPeriods(List<String> periods) {
+    	this.periods = periods;
+    }
+    
+    public void addPeriod(String period) {
+    	this.periods.add(period);
     }
 
     public String getPermalink() {
