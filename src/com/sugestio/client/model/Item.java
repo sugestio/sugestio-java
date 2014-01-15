@@ -27,6 +27,11 @@ public class Item extends Base {
     private String location_simple;
     private String location_latlong;
     private String location_city;
+    private String permalink;
+    private String thumbnail;
+    private String price;
+    private String length;
+    private String published;
 
     @XmlElement(name="creator")
     private List<String> creators;
@@ -42,9 +47,6 @@ public class Item extends Base {
     
     @XmlElement(name="period")
     private List<String> periods;
-
-    private String permalink;
-    private String thumbnail;
     
     
     public Item() {
@@ -300,5 +302,29 @@ public class Item extends Base {
     public void setThumbnail(String thumbnail) {
     	this.thumbnail = thumbnail;
     }
+
+	public String getPrice() {
+		return price;
+	}
+
+	public void setPrice(String price) {
+		this.price = price;
+	}
+
+	public String getLength() {
+		return length;
+	}
+
+	public void setLength(String length) {
+		this.length = length;
+	}
+
+	public String getPublished() {
+		return published;
+	}
+
+	public void setPublished(String published) {
+		this.published = published;
+	}
 
 }

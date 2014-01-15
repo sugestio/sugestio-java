@@ -63,11 +63,12 @@ public class Recommendation implements Comparable<Recommendation> {
     }
     
     @Override
-    public String toString() {  
-        
+    public String toString() {
         Formatter formatter = new Formatter(Locale.US);
-        return formatter.format(
+        String out = formatter.format(
             "<recommendation><itemid>%s</itemid>%f<score></score><algorithm>%s</algorithm></recommendation>",             
-            this.itemid, this.score, this.algorithm).toString();    
+            this.itemid, this.score, this.algorithm).toString();
+        formatter.close();
+        return out;
     }   
 }

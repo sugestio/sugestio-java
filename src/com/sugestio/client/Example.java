@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.sugestio.client.model.Consumption;
+import com.sugestio.client.model.Item;
 import com.sugestio.client.model.Recommendation;
 
 public class Example {
@@ -21,12 +22,14 @@ public class Example {
 		Example example = new Example();		
 		
 		//example.getRecommendations();
+		//example.addItem();
 		//example.addConsumption();
 		//example.addConsumptionsBulk();
 		//example.deleteItem();
 		//example.deleteUser();
 		//example.deleteConsumption();
-		example.deleteConsumptionsBulk();
+		//example.deleteConsumptionsBulk();
+		//example.getItem();
 		
 		// remember to shutdown the client
 		example.shutdown();
@@ -53,6 +56,22 @@ public class Example {
 				System.out.println(rec.toString());
 			}
 			
+		} catch (SugestioException e) {
+			e.getSugestioResult().printReport();
+		}
+	}
+	
+	public void addItem() {
+		
+		Item item = new Item("X");
+		item.setTitle("item name");
+		item.setLength("10");
+		item.addCategory("category 1");
+		item.addCategory("category 2");
+		
+		try {
+			SugestioResult<String> result = client.addItem(item);			
+			result.printReport();			
 		} catch (SugestioException e) {
 			e.getSugestioResult().printReport();
 		}
@@ -91,7 +110,7 @@ public class Example {
 	public void deleteItem() {
 
 		try {
-			SugestioResult<String> result = client.deleteItem("1");
+			SugestioResult<String> result = client.deleteItem("X");
 			result.printReport();
 		} catch (SugestioException e) {
 			e.getSugestioResult().printReport();
@@ -136,6 +155,16 @@ public class Example {
 			e.getSugestioResult().printReport();
 		}
 		
+	}
+	
+	public void getItem() {
+		
+		try {
+			Item item = client.getItem("1");
+			System.out.println(item.getTitle());			
+		} catch (SugestioException e) {
+			e.getSugestioResult().printReport();
+		}
 	}
 
 }

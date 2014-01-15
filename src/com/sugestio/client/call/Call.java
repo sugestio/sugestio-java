@@ -82,10 +82,10 @@ public abstract class Call {
             }
 
         } else if (resourceType == ResourceType.ITEM) {
-
+        	
             if (verb == Verb.POST) {
                 uri += "/items";
-            } else if (verb == Verb.DELETE && itemId != null) {
+            } else if ((verb == Verb.GET || verb == Verb.DELETE) && itemId != null) {
             	uri += "/items/" + itemId + ".xml";
             } else {
                 return null;

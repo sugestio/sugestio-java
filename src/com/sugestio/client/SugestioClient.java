@@ -15,6 +15,7 @@ import java.util.concurrent.Future;
 import com.sugestio.client.call.DeleteCall;
 import com.sugestio.client.call.DeleteRecommendationCall;
 import com.sugestio.client.call.GetAnalyticsCall;
+import com.sugestio.client.call.GetItemCall;
 import com.sugestio.client.call.GetRecommendationsCall;
 import com.sugestio.client.call.PostCall;
 import com.sugestio.client.call.RecommendationFilter;
@@ -532,6 +533,31 @@ public class SugestioClient {
 
     //<editor-fold defaultstate="collapsed" desc=" Items ">
 
+    /**
+     * Retrieves the item metadata for the given itemId.
+     * @param itemId
+     * @return item metadata
+     * @throws SugestioException
+     */
+    public Item getItem(String itemId) throws SugestioException {
+    	
+    	Callable<SugestioResult<Item>> call = new GetItemCall(jClient, config, itemId);
+        Future<SugestioResult<Item>> future = executor.submit(call);
+        SugestioResult<Item> result = null;
+
+        try {
+            result = future.get();
+        } catch (Exception e) {
+            result = new SugestioResult<Item>(false);
+            result.setMessage(e.getMessage());
+        }
+
+        if (!result.isOK())
+            throw new SugestioException(result);
+
+        return result.getEntity();    	
+    }
+    
     /**
      * Add or update a single item.
      * @param item
