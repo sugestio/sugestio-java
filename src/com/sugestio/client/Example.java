@@ -71,7 +71,7 @@ public class Example {
 
         try {
             SugestioResult<String> result = client.addItem(item);			
-            result.printReport();			
+            result.printReport();            
         } catch (SugestioException e) {
             e.getSugestioResult().printReport();
         }

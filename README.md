@@ -176,6 +176,56 @@ The RecommendationFilter is a helper class for restricting the recommendations a
 		return this.client.getRecommendations(userId, filter);
 	}
 
-## Exception handling
+## Error handling
 
-To do
+### Single object submissions
+
+Successfully submitting a single user, item or consumption returns a <i>SugestioResult</i> object. This object contains the HTTP verb, the resource URL, the HTTP status code, and any human-readable text message. A <code>printReport()</code> method is provided for convenience. If there was a problem with the request, a SugestioException is raised. Consider the following example code:
+
+	try {
+	
+		Consumption c1 = new Consumption("u1", "i1");
+		Consumption c2 = new Consumption("u1", null);
+		SugestioResult<String> result;
+		
+		result = client.addConsumption(c1);			
+		result.printReport();
+		result = client.addConsumption(c2);			
+		result.printReport();
+		
+	} catch (SugestioException e) {
+		e.getSugestioResult().printReport();
+	}
+	
+Consumption 1 will be submitted successfully. The output will be as follows:
+
+	POST http://api.sugestio.com/sites/sandbox/consumptions.xml
+		202 Accepted
+		
+Consumption 2 is missing a valid itemId, and an exception will be raised. The output is as follows:
+
+	POST http://api.sugestio.com/sites/sandbox/consumptions.xml
+		Client side problem:
+		400 Bad Request: Submitted consumption data is missing required attribute itemid.
+		
+Server side problems (with a HTTP status code in the 5xx range) are caught the same way.
+
+### Bulk submissions
+
+Consumption data will often be submitted in bulk for increased throughput. Bulk submissions do not raise an exception, because the submission may be split up into (e.g.) 10 requests, of which 9 could be successful and one could fail due to a client or server side issue. Rather, it is up to the developer to inspect the result object and take the appropriate action. Here, the addConsumptions method returns a map in which each entry is represented by a sublist of consumptions and the associated web service response.
+
+	List<Consumption> consumptions = new ArrayList<Consumption>();
+	// ... populate the consumptions array
+	
+	Map<List<Consumption>, SugestioResult<String>> results;
+	results = client.addConsumptions(consumptions);
+
+	for (Map.Entry<List<Consumption>, SugestioResult<String>> entry : results.entrySet()) {
+		if (!entry.getValue().isOK()) {			
+			System.err.println("Failed to submit these consumptions: ");
+			for (Consumption c : entry.getKey()) {
+				System.err.println("\t" + c.getId());
+			}
+		}
+	}
+	
