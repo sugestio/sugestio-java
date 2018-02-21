@@ -15,6 +15,8 @@ import java.util.concurrent.Future;
 import com.sugestio.client.call.DeleteCall;
 import com.sugestio.client.call.DeleteRecommendationCall;
 import com.sugestio.client.call.GetAnalyticsCall;
+import com.sugestio.client.call.GetConsumptionCall;
+import com.sugestio.client.call.GetConsumptionHistoryCall;
 import com.sugestio.client.call.GetItemCall;
 import com.sugestio.client.call.GetRecommendationsCall;
 import com.sugestio.client.call.PostCall;
@@ -47,7 +49,7 @@ public class SugestioClient {
         CONSUMPTION,
         RECOMMENDATION,
         SIMILAR,
-        ANALYTICS
+        ANALYTICS        
     }    
     
     public enum PartitionType {
@@ -341,6 +343,56 @@ public class SugestioClient {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc=" Consumptions ">
+    
+    /**
+     * Retrieves the consumption with given consumptionId
+     * @param consumptionId
+     * @return consumption
+     * @throws SugestioException
+     */
+    public Consumption getConsumption(String consumptionId) throws SugestioException {
+    	
+    	Callable<SugestioResult<Consumption>> call = new GetConsumptionCall(jClient, config, consumptionId);
+        Future<SugestioResult<Consumption>> future = executor.submit(call);
+        SugestioResult<Consumption> result = null;
+
+        try {
+            result = future.get();
+        } catch (Exception e) {
+            result = new SugestioResult<Consumption>(false);
+            result.setMessage(e.getMessage());
+        }
+
+        if (!result.isOK())
+            throw new SugestioException(result);
+
+        return result.getEntity();    	
+    }
+    
+    /**
+     * Retrieve the consumptions this user has made, optionally filtered by itemId.
+     * @param userId userId (required)
+     * @param itemId itemId (optional)
+     * @return consumptions
+     */
+    public List<Consumption> getConsumptionHistory(String userId, String itemId) throws SugestioException {
+        
+        Callable<SugestioResult<List<Consumption>>> call = new GetConsumptionHistoryCall(jClient, config, userId, itemId);
+        Future<SugestioResult<List<Consumption>>> future = executor.submit(call);
+        SugestioResult<List<Consumption>> result = null;
+
+        try {
+            result = future.get();
+        } catch (Exception e) {
+            result = new SugestioResult<List<Consumption>>(false);
+            result.setMessage(e.getMessage());
+        }
+
+        if (!result.isOK())
+            throw new SugestioException(result);
+
+        return result.getEntity();    	    
+    }
 
     /**
      * Submit a single consumption
@@ -385,14 +437,15 @@ public class SugestioClient {
     }
     
     /**
-     * Deletes the consumption data of the given user. The user's metadata is not deleted.
-     * @param userId
+     * Deletes the consumption data of the given user, optionally filtered by itemId. The user's metadata is not deleted.
+     * @param userId (required)
+     * @param itemId (optional) the item consumptions to delete 
      * @return
      * @throws SugestioException
      */
-    public SugestioResult<String> deleteUserConsumptions(String userId) throws SugestioException {
+    public SugestioResult<String> deleteUserConsumptions(String userId, String itemId) throws SugestioException {
     
-    	Callable<SugestioResult<String>> call = new DeleteCall(jClient, config, ResourceType.CONSUMPTION, userId, null, null);
+    	Callable<SugestioResult<String>> call = new DeleteCall(jClient, config, ResourceType.CONSUMPTION, userId, itemId, null);
         Future<SugestioResult<String>> future = executor.submit(call);
         SugestioResult<String> result = null;
 
@@ -435,7 +488,7 @@ public class SugestioClient {
     }
     
     /**
-     * Deletes the consumptions identified by the given consumptionIds
+     * Deletes the consumptions identified by the given consumptionIds.
      * @param consumptionIds
      * @return
      * @throws SugestioException

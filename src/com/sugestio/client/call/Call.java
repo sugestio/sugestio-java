@@ -63,7 +63,20 @@ public abstract class Call {
         } else if (resourceType == ResourceType.CONSUMPTION) {
 
             if (verb == Verb.POST) {
-                uri += "/consumptions";
+                uri += "/consumptions.xml";
+            } else if (verb == Verb.GET) {
+                if (consumptionId != null) {
+                    uri += "/consumptions/" + consumptionId + ".xml";
+                } else if (userId != null) {
+                    uri += "/users/" + userId;
+                    uri += "/consumptions";
+                    if (itemId != null) {
+                        uri += "/" + itemId;
+                    }
+                    uri += ".xml";
+                } else {
+                    return null;
+                }
             } else if (verb == Verb.DELETE) {
             	if (consumptionId != null) {
             		// delete one consumption in particular

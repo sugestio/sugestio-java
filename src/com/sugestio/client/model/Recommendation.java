@@ -16,6 +16,8 @@ public class Recommendation implements Comparable<Recommendation> {
     private Double score;
     @XmlElement(required = false)
     private String algorithm;
+    @XmlElement(required=false)
+    private Item item;
      
     
     public Recommendation() {
@@ -32,6 +34,19 @@ public class Recommendation implements Comparable<Recommendation> {
         this.itemid = itemid;
         this.score = score;
         this.algorithm = algorithm;
+    }
+    
+    public Recommendation(String itemid, Double score, String algoritm, Item item) {
+        this(itemid, score, algoritm);
+        this.item = item;
+    }
+    
+    public Item getItem() {
+        return this.item;
+    }
+    
+    public void setItem(Item item) {
+        this.item = item;
     }
 
     public String getItemid() {
