@@ -97,7 +97,7 @@ Finally, we keep a record of loans. This type of object takes two arguments in i
 	client.addConsumption(loan);
 	client.shutdown();
 
-Recommending new books to user 1407 is easy. Each recommendation object has an Item ID associated with it. In our case, this ID is the ISBN number. Let's assume our library application has a method <code>getBook()</code> which looks up a book based on its ISBN number.
+Recommending new books to user 1407 is easy. Each recommendation object has an Item ID associated with it. In our case, this ID is the ISBN number.
 
 	SugestioClient client = new SugestioClient("sandbox", "demo");
 	List<Recommendation> recommendations = client.getRecommendations("1407");
@@ -105,7 +105,7 @@ Recommending new books to user 1407 is easy. Each recommendation object has an I
 	printLine("You might also like...");
 	
 	for (Recommendation recommendation : recommendations) {
-		Book book = getBook(recommendation.getItemID());
+		Book book = recommendation.getItem();
 		printLine(book.getTitle());
 	}
 
@@ -163,6 +163,17 @@ Now, let's look at the rest of the program. This time, we create a <code>Sugesti
 		}
 
 		client.shutdown();
+	}
+	
+The RecommendationFilter is a helper class for restricting the recommendations according to a number of parameters. The code fragment below illustrates how to retrieve only the top five recommendations for user 1 that belong to category A, but not category B.
+
+	public List<Recommendation> getRecommendations() throws Exception {	
+		String userId = "1";		
+		RecommendationFilter filter = new RecommendationFilter();
+		filter.setLimit(5);
+		filter.inCategory("A", true);
+		filter.inCategory("B", false);		
+		return this.client.getRecommendations(userId, filter);
 	}
 
 ## Exception handling
