@@ -18,8 +18,8 @@ import com.sun.jersey.api.client.WebResource.Builder;
 
 public class GetConsumptionCall extends Call implements Callable<SugestioResult<Consumption>> {
 	
-	public GetConsumptionCall(Client jClient, SugestioConfig config, String itemId) {
-        super(jClient, config, ResourceType.CONSUMPTION, null, itemId, null);        
+	public GetConsumptionCall(Client jClient, SugestioConfig config, String consumptionId) {
+        super(jClient, config, ResourceType.CONSUMPTION, null, null, consumptionId);        
     }
 
     @Override
