@@ -5,7 +5,7 @@ recommendation service. Data is submitted as XML. Users, items and consumptions 
 be transmitted in bulk. The library makes use of the 
 [Concurrency API](http://download.oracle.com/javase/1.5.0/docs/guide/concurrency/index.html) 
 and the [Jersey](http://jersey.dev.java.net) RESTful web service client. A zip file with 
-JAR and all dependencies can be downloaded [here](http://www.sugestio.com/sites/default/files/sugestio-java-bin.zip).
+JAR and all dependencies can be downloaded [here (JDK <= 8)](http://www.sugestio.com/sites/default/files/sugestio-java-bin.zip) or [here (JDK 9-15)](http://www.sugestio.com/sites/default/files/sugestio-java-bin-jdk15.zip).
 
 
 ## About Sugestio
